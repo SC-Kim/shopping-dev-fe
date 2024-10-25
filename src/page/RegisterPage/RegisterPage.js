@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 
 import "./style/register.style.css";
 
-import { registerUser } from "../../features/user/userSlice";
+import { registerUser, clearErrors } from "../../features/user/userSlice";
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
@@ -24,6 +24,10 @@ const RegisterPage = () => {
   const register = (event) => {
     event.preventDefault();
     const { name, email, password, confirmPassword, policy } = formData;
+
+    // 에러 상태 초기화
+    dispatch(clearErrors());
+
     const checkConfirmPassword = password === confirmPassword;
     if (!checkConfirmPassword) {
       setPasswordError("비밀번호와 비밀번호 확인 정보가 일치하지 않습니다.");
@@ -39,8 +43,14 @@ const RegisterPage = () => {
   };
 
   const handleChange = (event) => {
-    event.preventDefault();
+
+    
     let { id, value, type, checked } = event.target;
+
+    // 체크박스가 아닌 경우에만 리로드를 막음
+    if (type !== "checkbox") {
+      event.preventDefault();
+    }
     if (id === "confirmPassword" && passwordError) setPasswordError("");
     if (type === "checkbox") {
       if (policyError) setPolicyError(false);
