@@ -19,9 +19,10 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [passwordError, setPasswordError] = useState("");
   const [policyError, setPolicyError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { registrationError } = useSelector((state) => state.user);
 
-  const register = (event) => {
+  const register = async (event) => {
     event.preventDefault();
     const { name, email, password, confirmPassword, policy } = formData;
 
@@ -39,12 +40,21 @@ const RegisterPage = () => {
     }
     setPasswordError("");
     setPolicyError(false);
-    dispatch(registerUser({ name, email, password, navigate }));
+    setIsSubmitting(true);
+
+    try {
+      await dispatch(registerUser({ name, email, password, navigate }));
+    } catch (error) {
+      console.error("회원가입 오류: ", error)
+    } finally {
+      setIsSubmitting(false);
+    }
+
   };
 
   const handleChange = (event) => {
 
-    
+
     let { id, value, type, checked } = event.target;
 
     // 체크박스가 아닌 경우에만 리로드를 막음
@@ -124,8 +134,8 @@ const RegisterPage = () => {
             checked={formData.policy}
           />
         </Form.Group>
-        <Button variant="danger" type="submit">
-          회원가입
+        <Button variant="danger" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "가입 중...." : "회원가입"}
         </Button>
       </Form>
     </Container>
