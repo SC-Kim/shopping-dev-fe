@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
 
-const Navbar = ({ user }) => {
+const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
   const dispatch = useDispatch();
   const { cartItemCount } = useSelector((state) => state.cart);
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
@@ -30,11 +30,17 @@ const Navbar = ({ user }) => {
   let [width, setWidth] = useState(0);
   let navigate = useNavigate();
   const onCheckEnter = (event) => {
+
+    
+    
     if (event.key === "Enter") {
       if (event.target.value === "") {
+        setNavSearchQuery({page:1, name:""})
         return navigate("/");
       }
-      navigate(`?name=${event.target.value}`);
+      setNavSearchQuery({...navSearchQuery, name: event.target.value})
+      // setNavSearchQuery(event.target.value); // 검색어 업데이트
+      // navigate(`?name=${event.target.value}`);
     }
   };
   const handleLogout = () => {
@@ -51,6 +57,7 @@ const Navbar = ({ user }) => {
               <input
                 type="text"
                 placeholder="제품검색"
+                value={navSearchQuery}
                 onKeyPress={onCheckEnter}
               />
             </div>

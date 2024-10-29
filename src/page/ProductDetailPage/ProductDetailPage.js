@@ -24,9 +24,14 @@ const ProductDetail = () => {
   };
   const selectSize = (value) => {
     // 사이즈 추가하기
+    // 사이즈 선택 시 상태 업데이트
+    setSize(value);
+    // 에러 상태 초기화
+    if (sizeError) setSizeError(false);
   };
 
   useEffect(() => {
+    console.log("id??", id)
     dispatch(getProductDetail(id));
   }, [id, dispatch]);
 
@@ -59,7 +64,8 @@ const ProductDetail = () => {
             className="drop-down size-drop-down"
             title={size}
             align="start"
-            onSelect={(value) => selectSize(value)}
+            // onSelect={(value) => selectSize(value)}
+            onSelect={selectSize}
           >
             <Dropdown.Toggle
               className="size-drop-down"

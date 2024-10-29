@@ -12,10 +12,10 @@ import ProductDetail from "../page/ProductDetailPage/ProductDetailPage";
 import RegisterPage from "../page/RegisterPage/RegisterPage";
 import PrivateRoute from "./PrivateRoute";
 
-const AppRouter = () => {
+const AppRouter = ({ navSearchQuery, setNavSearchQuery}) => {
   return (
     <Routes>
-      <Route path="/" element={<ProductAll />} />
+      <Route path="/" element={<ProductAll navSearchQuery={navSearchQuery} setNavSearchQuery={setNavSearchQuery} />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/product/:id" element={<ProductDetail />} />

@@ -8,7 +8,7 @@ import ToastMessage from "../common/component/ToastMessage";
 import { loginWithToken } from "../features/user/userSlice";
 import { getCartQty } from "../features/cart/cartSlice";
 
-const AppLayout = ({ children }) => {
+const AppLayout = ({ children, navSearchQuery, setNavSearchQuery }) => {
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -21,6 +21,9 @@ const AppLayout = ({ children }) => {
       dispatch(getCartQty());
     }
   }, [user]);
+
+
+
   return (
     <div>
       <ToastMessage />
@@ -35,7 +38,7 @@ const AppLayout = ({ children }) => {
         </Row>
       ) : (
         <>
-          <Navbar user={user} />
+          <Navbar user={user} navSearchQuery={navSearchQuery} setNavSearchQuery={setNavSearchQuery} />
           {children}
         </>
       )}
