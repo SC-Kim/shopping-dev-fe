@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
+import {initialCart} from "../../features/cart/cartSlice";
 
 const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
   };
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(initialCart());
     navigate("/")
   };
   return (
@@ -131,7 +133,7 @@ const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
       </div>
 
       <div className="nav-logo">
-        <Link to="/">
+        <Link to="/" onClick={() => navigate("/")}>
           <img width={100} src="/image/hm-logo.png" alt="hm-logo.png" />
         </Link>
       </div>
