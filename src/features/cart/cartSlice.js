@@ -121,7 +121,7 @@ const cartSlice = createSlice({
         state.totalPrice = action.payload.reduce((total, item) => total + item.productId.price * item.qty, 0)
       })
       .addCase(getCartList.rejected, (state, action) => {
-        state.lodaing = false;
+        state.loading = false;
         state.error = action.payload;
       })
       .addCase(deleteCartItem.pending, (state, action) => {

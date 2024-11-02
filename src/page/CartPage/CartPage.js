@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CartProductCard from "./component/CartProductCard";
 import OrderReceipt from "../PaymentPage/component/OrderReceipt";
@@ -9,19 +9,25 @@ import { getCartList } from "../../features/cart/cartSlice";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const { cartList, totalPrice } = useSelector((state) => state.cart);
+  const { cartList, totalPrice, loading } = useSelector((state) => state.cart);
 
   useEffect(() => {
     //카트리스트 불러오기
     dispatch(getCartList())
-    
-  }, []);   //TODO Here
+
+  }, [dispatch]);   //TODO Here
 
   return (
     <Container>
       <Row>
         <Col xs={12} md={7}>
-          {cartList.length > 0 ? (
+          {loading ? (
+            <div className="text-align-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : cartList.length > 0 ? (
             cartList.map((item) => (
               <CartProductCard item={item} key={item._id} />
             ))
