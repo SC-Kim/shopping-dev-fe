@@ -40,7 +40,7 @@ const ProductDetail = () => {
   };
 
   useEffect(() => {
-    console.log("id??", id)
+    // console.log("id??", id)
     dispatch(getProductDetail(id));
   }, [id, dispatch]);
 

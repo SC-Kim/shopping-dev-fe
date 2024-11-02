@@ -20,7 +20,14 @@ const Login = () => {
     if (loginError) {
       dispatch(clearErrors());
     }
-  }, [navigate]);
+  }, [loginError, dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/"); // user가 존재할 때만 리다이렉트
+    }
+  }, [user, navigate]);
+
   const handleLoginWithEmail = (event) => {
     event.preventDefault();
     dispatch(loginWithEmail({ email, password }));
@@ -29,10 +36,6 @@ const Login = () => {
   const handleGoogleLogin = async (googleData) => {
     //구글 로그인 하기
   };
-
-  if (user) {
-    navigate("/");
-  }
 
   // if (token) {
   //   sessionStorage.setItem("token", token);
