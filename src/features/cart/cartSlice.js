@@ -21,8 +21,11 @@ export const addToCart = createAsyncThunk(
       dispatch(showToastMessage({ message: "카트에 아이템이 추가 됐습니다.", status: "success" }))
       return response.data.cartItemQty
     } catch (error) {
-      dispatch(showToastMessage({ message: "카트에 아이템 추가 실패", status: "error" }))
-      return rejectWithValue(error.error)
+      // error 객체의 error 속성에 접근
+      const errorMessage = error.error || "카트에 아이템 추가 실패"; 
+      console.log("Final errorMessage:", errorMessage);
+      dispatch(showToastMessage({ message: errorMessage, status: "error" }));
+      return rejectWithValue(errorMessage);
     }
   }
 );
