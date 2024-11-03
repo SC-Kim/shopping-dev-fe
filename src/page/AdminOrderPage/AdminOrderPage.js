@@ -21,6 +21,8 @@ const AdminOrderPage = () => {
     page: query.get("page") || 1,
     ordernum: query.get("ordernum") || "",
   });
+
+  const error = useSelector((state) => state.order.error);
   const [open, setOpen] = useState(false);
 
   const tableHeader = [
@@ -59,6 +61,8 @@ const AdminOrderPage = () => {
 
   const handleClose = () => {
     setOpen(false);
+    // OrderDetailDialog가 닫힐 때 목록을 다시 불러옴
+    dispatch(getOrderList(searchQuery));
   };
 
   return (
@@ -101,7 +105,8 @@ const AdminOrderPage = () => {
         />
       </Container>
 
-      {open && <OrderDetailDialog open={open} handleClose={handleClose} />}
+      {open && <OrderDetailDialog open={open} handleClose={handleClose} 
+             searchQuery={searchQuery}/>}
     </div>
   );
 };

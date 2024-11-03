@@ -38,19 +38,42 @@ export const getOrder = createAsyncThunk(
       // console.log("response.data??", response.data)
       return response.data
     } catch (error) {
-      return rejectWithValue(error.message)
+      return rejectWithValue(error.error)
     }
   }
 );
 
 export const getOrderList = createAsyncThunk(
   "order/getOrderList",
-  async (query, { rejectWithValue, dispatch }) => { }
+  async (query, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.get("/order", {
+        params: { ...query },
+      });
+
+      if (response.status !== 200) throw new Error(response.error)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.error)
+    }
+  }
 );
 
 export const updateOrder = createAsyncThunk(
   "order/updateOrder",
-  async ({ id, status }, { dispatch, rejectWithValue }) => { }
+  async ({ id, status, page }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.put(`/order/${id}`, { status });
+      if (response.status !== 200) throw new Error(response.error);
+      dispatch(showToastMessage({ message: "주문 상태 변경 완료", status: "success" }))
+      dispatch(getOrderList({ page }))
+      return response.data
+
+    } catch (error) {
+      return rejectWithValue(error.error)
+
+    }
+  }
 );
 
 // Order slice
@@ -82,11 +105,36 @@ const orderSlice = createSlice({
       .addCase(getOrder.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-      
+
         state.orderList = action.payload.data; // 전체 주문 리스트 상태에 반영
         state.totalPageNum = action.payload.totalPageNum || 1; // 페이지 정보 상태에 반영
       })
       .addCase(getOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getOrderList.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getOrderList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        state.orderList = action.payload.data; // 전체 주문 리스트 상태에 반영
+        state.totalPageNum = action.payload.totalPageNum || 1; // 페이지 정보 상태에 반영
+      })
+      .addCase(getOrderList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateOrder.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        state.selectedOrder = action.payload;
+      })
+      .addCase(updateOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

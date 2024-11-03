@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Modal, Button, Col, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { ORDER_STATUS } from "../../../constants/order.constants";
 import { currencyFormat } from "../../../utils/number";
-import { updateOrder } from "../../../features/order/orderSlice";
+import { updateOrder, getOrderList } from "../../../features/order/orderSlice";
+import { showToastMessage } from "../../../features/common/uiSlice"; // 토스트 메시지 액션 불러오기
 
-const OrderDetailDialog = ({ open, handleClose }) => {
+
+const OrderDetailDialog = ({ open, handleClose, searchQuery }) => {
   const selectedOrder = useSelector((state) => state.order.selectedOrder);
   const [orderStatus, setOrderStatus] = useState(selectedOrder.status);
   const dispatch = useDispatch();
@@ -13,21 +15,34 @@ const OrderDetailDialog = ({ open, handleClose }) => {
   const handleStatusChange = (event) => {
     setOrderStatus(event.target.value);
   };
-  const submitStatus = () => {
-    dispatch(updateOrder({ id: selectedOrder._id, status: orderStatus }));
+
+  const submitStatus = (event) => {
+    event.preventDefault();  // 기본 동작 방지
+
+    // 주문 상태 업데이트 후 대기
+    dispatch(updateOrder({ id: selectedOrder._id, 
+      status: orderStatus, page: searchQuery.page }));
+
+    // 성공 시 다이얼로그 닫기 및 리스트 새로고침
     handleClose();
+
+    // dispatch(updateOrder({ id: selectedOrder._id, status: orderStatus }))
+    // handleClose();
   };
 
-  if (!selectedOrder) {
-    return <></>;
-  }
+  // selectedOrder가 없으면 렌더링하지 않음
+  if (!selectedOrder) return null;
+
+  // if (!selectedOrder) {
+  //   return <></>;
+  // }
   return (
     <Modal show={open} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Order Detail</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>예약번호: {selectedOrder.orderNum}</p>
+        <p>주문번호: {selectedOrder.orderNum}</p>
         <p>주문날짜: {selectedOrder.createdAt.slice(0, 10)}</p>
         <p>이메일: {selectedOrder.userId.email}</p>
         <p>
@@ -35,9 +50,8 @@ const OrderDetailDialog = ({ open, handleClose }) => {
         </p>
         <p>
           연락처:
-          {`${
-            selectedOrder.contact.firstName + selectedOrder.contact.lastName
-          } ${selectedOrder.contact.contact}`}
+          {`${selectedOrder.contact.firstName + selectedOrder.contact.lastName
+            } ${selectedOrder.contact.contact}`}
         </p>
         <p>주문내역</p>
         <div className="overflow-x">
