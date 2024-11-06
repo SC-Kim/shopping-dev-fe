@@ -16,12 +16,13 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    if (loginError) {
-      dispatch(clearErrors());
-    }
-  }, [loginError, dispatch]);
-
+  
+  // useEffect(() => {
+  //   if (loginError) {
+  //     dispatch(clearErrors());
+  //   }
+  // }, [loginError]);
+  
   useEffect(() => {
     if (user) {
       navigate("/"); // user가 존재할 때만 리다이렉트

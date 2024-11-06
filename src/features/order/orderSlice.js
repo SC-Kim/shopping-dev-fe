@@ -20,10 +20,12 @@ export const createOrder = createAsyncThunk(
     try {
       const response = await api.post("/order", payload)
       dispatch(getCartQty())
-      if (response.status !== 200) throw new Error(response.error)
+      // if (response.status !== 200) throw new Error(response.error)
       return response.data.orderNum
     } catch (error) {
-      return rejectWithValue(error.error)
+      const errorMessage = error.error || error.message || "주문 실패 했습니다!"; 
+      dispatch(showToastMessage({ message: errorMessage, status: "error" }));
+      return rejectWithValue(errorMessage)
     }
 
   }
