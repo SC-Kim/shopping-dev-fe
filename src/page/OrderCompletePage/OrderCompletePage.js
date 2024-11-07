@@ -1,11 +1,19 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../PaymentPage/style/paymentPage.style.css";
 
 const OrderCompletePage = () => {
   const { orderNum } = useSelector((state) => state.order);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!orderNum) {
+      navigate("/"); // 주문번호가 없으면 메인 페이지로 리다이렉트
+    }
+  }, [orderNum, navigate]);
+
   if (orderNum === "")
     return (
       <Container className="confirmation-page">
