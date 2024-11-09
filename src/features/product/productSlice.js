@@ -23,7 +23,7 @@ export const getProductDetail = createAsyncThunk(
     try {
       const response = await api.get(`/product/${id}`);
       if (response.status !== 200) throw new Error(response.error)
-      // console.log("detail product??", response.data)
+      
       return response.data
     } catch (error) {
       return rejectWithValue(error.error)
@@ -69,7 +69,7 @@ export const editProduct = createAsyncThunk(
   "products/editProduct",
   async ({ id, ...formData }, { dispatch, rejectWithValue }) => {
     try {
-      //console.log("FormData:??", JSON.stringify(formData, null, 2));
+ 
       const response = await api.put(`/product/${id}`, formData)
       if (response.status !== 200) throw new Error(response.error)
       dispatch(showToastMessage({ message: "상품 변경 완료", status: "success" }))

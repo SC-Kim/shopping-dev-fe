@@ -11,6 +11,9 @@ const initialState = {
   error: "",
   loading: false,
   totalPageNum: 1,
+  recentAddress: null,
+  previousAddresses: [],
+
 };
 
 // Async thunks
@@ -23,7 +26,7 @@ export const createOrder = createAsyncThunk(
       // if (response.status !== 200) throw new Error(response.error)
       return response.data.orderNum
     } catch (error) {
-      const errorMessage = error.error || error.message || "주문 실패 했습니다!"; 
+      const errorMessage = error.error || error.message || "주문 실패 했습니다!";
       dispatch(showToastMessage({ message: errorMessage, status: "error" }));
       return rejectWithValue(errorMessage)
     }
@@ -37,7 +40,7 @@ export const getOrder = createAsyncThunk(
     try {
       const response = await api.get(`/order/me?page=${page}`);
       if (response.status !== 200) throw new Error(response.error)
-      // console.log("response.data??", response.data)
+      
       return response.data
     } catch (error) {
       return rejectWithValue(error.error)
@@ -74,6 +77,48 @@ export const updateOrder = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.error)
 
+    }
+  }
+);
+
+// New action to fetch the most recent address
+export const fetchRecentAddress = createAsyncThunk(
+  "order/fetchRecentAddress",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/order/recent-address");
+   
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.error || error.message);
+    }
+  }
+);
+
+// New action to fetch all previous addresses
+export const fetchPreviousAddresses = createAsyncThunk(
+  "order/fetchPreviousAddresses",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/order/previous-addresses");
+      const addresses = response.data.data;
+
+      // 중복 제거 로직: 모든 주요 필드 고려
+      const uniqueAddresses = addresses.filter((address, index, self) =>
+        index ===
+        self.findIndex(
+          (a) =>
+            a.address === address.address &&
+            a.city === address.city &&
+            a.zip === address.zip &&
+            a.contact.firstName === address.contact.firstName &&
+            a.contact.lastName === address.contact.lastName
+        )
+      );
+
+      return uniqueAddresses;
+    } catch (error) {
+      return rejectWithValue(error.error || error.message);
     }
   }
 );
@@ -140,6 +185,12 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(fetchRecentAddress.fulfilled, (state, action) => {
+        state.recentAddress = action.payload;
+      })
+      .addCase(fetchPreviousAddresses.fulfilled, (state, action) => {
+        state.previousAddresses = action.payload;
+      });
 
   },
 });

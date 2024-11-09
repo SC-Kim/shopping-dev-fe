@@ -40,13 +40,12 @@ const LandingPage = ({ navSearchQuery, setNavSearchQuery }) => {
     }
     const params = new URLSearchParams(navSearchQuery) // 객체를 쿼리 형태로 바꿔준다. 
     const query = params.toString()
-    // console.log("query??", query)
+   
     navigate("?" + query)
   }, [navSearchQuery]);
 
   const handlePageClick = ({ selected }) => {
     //  쿼리에 페이지값 바꿔주기
-    // console.log("selected??", selected)
     setNavSearchQuery({ ...navSearchQuery, page: selected + 1 })
   };
 

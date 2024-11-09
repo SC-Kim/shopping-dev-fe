@@ -48,7 +48,7 @@ const AdminProductPage = () => {
     }
     const params = new URLSearchParams(searchQuery) // 객체를 쿼리 형태로 바꿔준다. 
     const query = params.toString()
-    // console.log("query??", query)
+    
     navigate("?" + query)
   }, [searchQuery]);
 
@@ -80,7 +80,7 @@ const AdminProductPage = () => {
 
   const handlePageClick = ({ selected }) => {
     //  쿼리에 페이지값 바꿔주기
-    // console.log("selected??", selected)
+ 
     setSearchQuery({...searchQuery, page:selected+1 })
   };
 

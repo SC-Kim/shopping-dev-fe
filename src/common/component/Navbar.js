@@ -11,9 +11,9 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
-import {initialCart} from "../../features/cart/cartSlice";
+import { initialCart } from "../../features/cart/cartSlice";
 
-const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
+const Navbar = ({ user, navSearchQuery, setNavSearchQuery }) => {
   const dispatch = useDispatch();
   const { cartItemCount } = useSelector((state) => state.cart);
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
@@ -32,14 +32,14 @@ const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
   let navigate = useNavigate();
   const onCheckEnter = (event) => {
 
-    
-    
+
+
     if (event.key === "Enter") {
       if (event.target.value === "") {
-        setNavSearchQuery({page:1, name:""})
+        setNavSearchQuery({ page: 1, name: "" })
         return navigate("/");
       }
-      setNavSearchQuery({...navSearchQuery, name: event.target.value})
+      setNavSearchQuery({ ...navSearchQuery, name: event.target.value })
       // setNavSearchQuery(event.target.value); // 검색어 업데이트
       // navigate(`?name=${event.target.value}`);
     }
@@ -111,9 +111,8 @@ const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
             <div onClick={() => navigate("/cart")} className="nav-icon">
               <FontAwesomeIcon icon={faShoppingBag} />
               {!isMobile && (
-                <span style={{ cursor: "pointer" }}>{`쇼핑백(${
-                  cartItemCount || 0
-                })`}</span>
+                <span style={{ cursor: "pointer" }}>{`쇼핑백(${cartItemCount || 0
+                  })`}</span>
               )}
             </div>
             <div
@@ -133,7 +132,10 @@ const Navbar = ({ user, navSearchQuery, setNavSearchQuery}) => {
       </div>
 
       <div className="nav-logo">
-        <Link to="/" onClick={() => navigate("/")}>
+        <Link to="/" onClick={() => {
+          setNavSearchQuery({ page: 1, name: "" }); // 페이지네이션 초기화 및 검색어 초기화
+          navigate("/");
+        }}>
           <img width={100} src="/image/hm-logo.png" alt="hm-logo.png" />
         </Link>
       </div>

@@ -23,7 +23,7 @@ export const addToCart = createAsyncThunk(
     } catch (error) {
       // error 객체의 error 속성에 접근
       const errorMessage = error.error || "카트에 아이템 추가 실패"; 
-      console.log("Final errorMessage:", errorMessage);
+
       dispatch(showToastMessage({ message: errorMessage, status: "error" }));
       return rejectWithValue(errorMessage);
     }
@@ -34,7 +34,7 @@ export const getCartList = createAsyncThunk(
   "cart/getCartList",
   async (_, { rejectWithValue, dispatch }) => {
     try {
-      // console.log("getCartList excuted!!!")
+      
       const response = await api.get("/cart")
       if (response.status !== 200) throw new Error(response.error)
       return response.data.data
@@ -137,7 +137,7 @@ const cartSlice = createSlice({
 
         // 삭제된 아이템을 cartList에서 제거
         state.cartList = state.cartList.filter((item) => item._id !== action.meta.arg);
-        // console.log("action.meta.arg??", action.meta.arg) 
+        
         state.totalPrice = state.cartList.reduce((total, item) => total + item.productId.price * item.qty, 0);
       })
       .addCase(deleteCartItem.rejected, (state, action) => {

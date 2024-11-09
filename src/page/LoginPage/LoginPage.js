@@ -36,8 +36,11 @@ const Login = () => {
 
   const handleGoogleLogin = async (googleData) => {
     //구글 로그인 하기
-    // console.log("hehe", googleData)
     dispatch(loginWithGoogle(googleData.credential))
+  };
+
+  const handleGoogleLoginError = () => {
+    document.getElementById("googleErrorMessage").innerText = "구글 로그인에 실패했습니다. 다시 시도해 주세요.";
   };
 
   // if (token) {
@@ -51,6 +54,9 @@ const Login = () => {
             <Alert variant="danger">{loginError}</Alert>
           </div>
         )}
+        <div id="googleErrorMessage" className="error-message">
+          {/* Google 로그인 오류 메시지가 여기에 표시됩니다. */}
+        </div>
         <Form className="login-form" onSubmit={handleLoginWithEmail}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
@@ -94,9 +100,7 @@ const Login = () => {
               <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
                 <GoogleLogin
                   onSuccess={handleGoogleLogin}
-                  onError={() => {
-                    console.log("Login Failed");
-                  }}
+                  onError={handleGoogleLoginError} // 실패 시 오류 메시지 표시
                 />
               </GoogleOAuthProvider>
             </div>

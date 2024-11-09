@@ -65,7 +65,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    //console.log("formdata: ?? ", formData)
+ 
     //재고를 입력했는지 확인, 아니면 에러
     if (stock.length === 0) return setStockError(true);
 
@@ -74,7 +74,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     const totalStock = stock.reduce((total, item) => {
       return { ...total, [item[0]]: parseInt(item[1]) }
     }, {})
-    //console.log("total stock??", totalStock)
 
     // 사이즈를 배열 형태로 추출
     const sizes = stock.map((item) => item[0]);
@@ -94,8 +93,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
       dispatch(editProduct({ ...finalFormData, id: selectedProduct._id })
       );
     };
-    // 성공 후 다이얼로그 닫기
-    setShowDialog(false);
+    
   };
 
   const handleChange = (event) => {
@@ -226,14 +224,13 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
                       handleSizeChange(event.target.value, index)
                     }
                     required
-                    defaultValue={item[0] ? item[0].toLowerCase() : ""}
+                    value={item[0] ? item[0].toLowerCase() : ""}
                   >
-                    <option value="" disabled selected hidden>
+                    <option value="" disabled hidden>
                       Please Choose...
                     </option>
                     {SIZE.map((item, index) => (
                       <option
-                        inValid={true}
                         value={item.toLowerCase()}
                         disabled={stock.some(
                           (size) => size[0] === item.toLowerCase()
@@ -252,7 +249,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
                     }
                     type="number"
                     placeholder="number of stock"
-                    value={item[1]}
+                    value={item[1] || ""}
                     required
                   />
                 </Col>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import OrderReceipt from "./component/OrderReceipt";
@@ -7,10 +7,13 @@ import PaymentForm from "./component/PaymentForm";
 import "./style/paymentPage.style.css";
 import { cc_expires_format } from "../../utils/number";
 import { createOrder } from "../../features/order/orderSlice";
+import { fetchRecentAddress, fetchPreviousAddresses } from "../../features/order/orderSlice";
 
 const PaymentPage = () => {
   const dispatch = useDispatch();
-  const { orderNum } = useSelector((state) => state.order);
+  const { orderNum, recentAddress, previousAddresses } = useSelector((state) => state.order);
+  const { cartList, totalPrice } = useSelector(state => state.cart);
+
   const [cardValue, setCardValue] = useState({
     cvc: "",
     expiry: "",
@@ -29,8 +32,6 @@ const PaymentPage = () => {
     zip: "",
   });
 
-  const { cartList, totalPrice } = useSelector(state => state.cart);
-
   useEffect(() => {
     if (firstLoading) {
       setFirstLoading(false); // useEffect가 처음에 호출될 때 오더 성공페이지로 넘어가지 않도록 처리 
@@ -40,10 +41,15 @@ const PaymentPage = () => {
       if (orderNum !== "") {
         navigate("/payment/success")
       }
-      
+
     }
 
   }, [orderNum]);
+
+  useEffect(() => {
+    dispatch(fetchRecentAddress());
+    dispatch(fetchPreviousAddresses());
+  }, [dispatch]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -88,6 +94,14 @@ const PaymentPage = () => {
     setCardValue({ ...cardValue, focus: e.target.name });
   };
 
+  const handleSelectPreviousAddress = (address) => {
+    setShipInfo({
+      ...shipInfo,
+      ...address.contact,
+      ...address.shipTo,
+    });
+  };
+
   if (cartList?.length === 0) {
     navigate("/cart");
   }// 주문할 아이템이 없다면 주문하기로 안넘어가게 막음
@@ -97,6 +111,25 @@ const PaymentPage = () => {
         <Col lg={7}>
           <div>
             <h2 className="mb-2">배송 주소</h2>
+            <Dropdown className="mb-3">
+              <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                기존 배송 주소에서 선택
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {previousAddresses.length > 0 ? (
+                  previousAddresses.map((address, index) => (
+                    <Dropdown.Item key={index} onClick={() => handleSelectPreviousAddress(address)}>
+                      {`${address.contact.firstName} ${address.contact.lastName}, ${address.shipTo.address}, ${address.shipTo.city}, ${address.shipTo.zip}`}
+                    </Dropdown.Item>
+                  ))
+                ) : (
+                  <Dropdown.Item disabled style={{ color: "red" }}>
+                    배송 이력이 없습니다.
+                  </Dropdown.Item>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+
             <div>
               <Form onSubmit={handleSubmit}>
                 <Row className="mb-3">
@@ -107,6 +140,7 @@ const PaymentPage = () => {
                       onChange={handleFormChange}
                       required
                       name="lastName"
+                      value={shipInfo.lastName}
                     />
                   </Form.Group>
 
@@ -117,6 +151,7 @@ const PaymentPage = () => {
                       onChange={handleFormChange}
                       required
                       name="firstName"
+                      value={shipInfo.firstName}
                     />
                   </Form.Group>
                 </Row>
@@ -128,6 +163,7 @@ const PaymentPage = () => {
                     onChange={handleFormChange}
                     required
                     name="contact"
+                    value={shipInfo.contact}
                   />
                 </Form.Group>
 
@@ -138,6 +174,7 @@ const PaymentPage = () => {
                     onChange={handleFormChange}
                     required
                     name="address"
+                    value={shipInfo.address}
                   />
                 </Form.Group>
 
@@ -148,6 +185,7 @@ const PaymentPage = () => {
                       onChange={handleFormChange}
                       required
                       name="city"
+                      value={shipInfo.city}
                     />
                   </Form.Group>
 
@@ -157,9 +195,11 @@ const PaymentPage = () => {
                       onChange={handleFormChange}
                       required
                       name="zip"
+                      value={shipInfo.zip}
                     />
                   </Form.Group>
                 </Row>
+
                 <div className="mobile-receipt-area">
                   <OrderReceipt cartList={cartList} totalPrice={totalPrice} />
                 </div>
